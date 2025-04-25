@@ -1,7 +1,5 @@
-import requests
+from WeatherParser import WeatherParser
 
-web_page = "https://pogoda.mail.ru/prognoz/moskva/" # Сайт для парсинга температуры.
+weather = WeatherParser()
 
-request_page = requests.get(web_page)
-
-print(request_page)
+print(weather.parse_page())
