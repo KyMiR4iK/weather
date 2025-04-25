@@ -1,5 +1,6 @@
-from WeatherParser import WeatherParser
+from weatherParser import WeatherParser
 
 weather = WeatherParser()
 
-print(weather.parse_page())
+
+print(weather.get_temperature_at_moment())
