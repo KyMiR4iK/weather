@@ -11,8 +11,8 @@ days = weather.get_temperature_for_10_days()
 for day in days:
     print(day)
 
-
+print('\n\n')
 # Месяц
-# month = weather.get_temperature_for_month("may", "2025")
-# for day in month:
-#     print(day)
+month = weather.get_temperature_for_month("may", "2025")
+for day in month:
+    print(day)

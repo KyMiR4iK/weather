@@ -19,6 +19,12 @@ class WeatherParser:
 
         return soup
     
+    def get_date_for_moment_and_10_days(self, soup):
+        date = soup.find('main', {'class' : ['d66a4e1abc', 'c05bc31d91', 'b19fe90d27']})
+        date = date.findAll('div', {'class' : ['c3132db061', 'fd517a8fd5']})[1]
+        date = date.text.replace(',', '').split()
+        return date
+
     def get_soup_for_moment_and_10_days(self):
             return self.parse_and_soup_page("https://pogoda.mail.ru/prognoz/moskva/")
 
@@ -30,9 +36,10 @@ class WeatherParser:
     
     def get_temperature_for_10_days(self): # Температура на 10 дней
         soup = self.get_soup_for_moment_and_10_days()
+        year = self.get_date_for_moment_and_10_days(soup)[4]
         soup = soup.findAll('div', {'class' : ['swiper-wrapper']})[1] # Блок с погодой на 10 дней
         soup = soup.findAll('div', {'class' : ['swiper-slide']}) # Массив из 10 дней
-        days = [self.create_dayWeeahter(day) for day in soup]
+        days = [self.create_dayWeeahter(day, year) for day in soup]
         
         return days
     
@@ -42,15 +49,15 @@ class WeatherParser:
         days = []
         for i in soup:
             if len(i.text) > 5:
-                date = i.find('div', {'class' : 'day__date'}).text
+                date = i.find('div', {'class' : 'day__date'}).text.lower()
                 temperature = i.find('div', {'class' : 'day__temperature'}).contents[0]
                 temperature = self.prettify_temperature(temperature)
                 day = DayWeather(date, temperature)
                 days.append(day)
         return days 
     
-    def create_dayWeeahter(self, slide):
-        date = slide.find('div', {'class' : ['e6255c6329']}).text
+    def create_dayWeeahter(self, slide, year):
+        date = slide.find('div', {'class' : ['e6255c6329']}).text + f' {year}'
         temperature = slide.find('div', {'class' : ['e487206871',  'a7b7a4c92f']}) # Берём температуру 
         temperature = self.prettify_temperature(temperature) # Делаем числом
 
