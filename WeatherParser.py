@@ -9,7 +9,9 @@ class WeatherParser:
         pass
 
     def prettify_temperature(self, temperature):
-        return int(temperature.text.replace('°', ''))
+        temp = temperature.text
+        temp = temp.replace('°', '').replace('\n', '').replace('\t', '')
+        return int(temp)
 
     def parse_and_soup_page(self, web_page): # Спарсить страницу и сварить суп
         request_page = requests.get(web_page)
@@ -34,15 +36,29 @@ class WeatherParser:
         
         return days
     
+    def get_temperature_for_month(self, month, year):
+        soup = self.parse_and_soup_page(f"https://pogoda.mail.ru/prognoz/moskva/{month}-{year}/")
+        soup = soup.findAll('div', {'class' : ['day', 'day_calendar']})[1:] # Все строки календаря
+        days = []
+        for i in soup:
+            if len(i.text) > 5:
+                date = i.find('div', {'class' : 'day__date'}).text
+                temperature = i.find('div', {'class' : 'day__temperature'}).contents[0]
+                temperature = self.prettify_temperature(temperature)
+                day = DayWeather(date, temperature)
+                days.append(day)
+        return days 
+    
     def create_dayWeeahter(self, slide):
         date = slide.find('div', {'class' : ['e6255c6329']}).text
-        temperature = self.prettify_temperature(slide.find('div', {'class' : ['e487206871',  'a7b7a4c92f']})) # Берём температуру и делаем числом
+        temperature = slide.find('div', {'class' : ['e487206871',  'a7b7a4c92f']}) # Берём температуру 
+        temperature = self.prettify_temperature(temperature) # Делаем числом
 
         day = DayWeather(date, temperature)
 
         return day
 
-    def get_temperature_for_month(self):
-        pass
+
+         
 
 
