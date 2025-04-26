@@ -1,4 +1,4 @@
-from weatherParser import WeatherParser
+from weatherParser import WeatherParser # type: ignore
 
 class FileManager:
     def __init__(self):

@@ -1,29 +1,48 @@
 import requests
 import bs4
 
+from dayWeather import DayWeather
+
 class WeatherParser:
 
     def __init__(self): # Конструктор
         pass
 
+    def prettify_temperature(self, temperature):
+        return int(temperature.text.replace('°', ''))
+
     def parse_and_soup_page(self, web_page): # Спарсить страницу и сварить суп
         request_page = requests.get(web_page)
         soup = bs4.BeautifulSoup(request_page.text, "html5lib")
-        
+
         return soup
     
+    def get_soup_for_moment_and_10_days(self):
+            return self.parse_and_soup_page("https://pogoda.mail.ru/prognoz/moskva/")
+
     def get_temperature_at_moment(self): # Температура на данный момент
-        soup = self.parse_and_soup_page("https://pogoda.mail.ru/prognoz/moskva/") # Получение супа
+        soup = self.get_soup_for_moment_and_10_days() # Получение супа
         soup = soup.find('div', {'class': ['e487206871', 'dedbbf63df', 'bfbd3eb239'],'data-qa': 'Title'}) # Получение блока с температурой
         
         return self.prettify_temperature(soup)
     
     def get_temperature_for_10_days(self): # Температура на 10 дней
-        pass
+        soup = self.get_soup_for_moment_and_10_days()
+        soup = soup.findAll('div', {'class' : ['swiper-wrapper']})[1] # Блок с погодой на 10 дней
+        soup = soup.findAll('div', {'class' : ['swiper-slide']}) # Массив из 10 дней
+        days = [self.create_dayWeeahter(day) for day in soup]
+        
+        return days
+    
+    def create_dayWeeahter(self, slide):
+        date = slide.find('div', {'class' : ['e6255c6329']}).text
+        temperature = self.prettify_temperature(slide.find('div', {'class' : ['e487206871',  'a7b7a4c92f']})) # Берём температуру и делаем числом
+
+        day = DayWeather(date, temperature)
+
+        return day
 
     def get_temperature_for_month(self):
         pass
 
-    def prettify_temperature(self, temperature):
-        return int(temperature.text.replace('°', ''))
 
