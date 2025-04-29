@@ -70,8 +70,8 @@ class FileManager:
             return True
         return False
         
-        def clear_all(self) -> None:
-            self._save_data({})
+    def clear_all(self) -> None:
+        self._save_data({})
 
     def get_by_date_range(self, start_date: str, end_date: str):
         try:
