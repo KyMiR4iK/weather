@@ -15,7 +15,9 @@ class WeatherParser:
     
     def prettify_date(self, date):
         _date = date.text
-        _date = _date.replace('сегодня', '').lower()
+        _date = _date.strip().lower()
+        _date = _date.replace('сегодня', '').strip()
+        print(_date)
         return _date
 
     def parse_and_soup_page(self, web_page): # Спарсить страницу и сварить суп

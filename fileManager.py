@@ -21,7 +21,7 @@ class FileManager:
     
     def get_by_date(self, date) -> 'DayWeather':
         data = self._load_data()
-        date_key = self._date_to_key(date)
+        date_key = date
         if date_key in data:
             item = data[date_key]
             return DayWeather(
