@@ -9,9 +9,14 @@ class WeatherParser:
         pass
 
     def prettify_temperature(self, temperature):
-        temp = temperature.text
-        temp = temp.replace('°', '').replace('\n', '').replace('\t', '')
-        return int(temp)
+        _temperature = temperature.text
+        _temperature = _temperature.replace('°', '').replace('\n', '').replace('\t', '')
+        return int(_temperature)
+    
+    def prettify_date(self, date):
+        _date = date.text
+        _date = _date.replace('сегодня', '').lower()
+        return _date
 
     def parse_and_soup_page(self, web_page): # Спарсить страницу и сварить суп
         request_page = requests.get(web_page)
@@ -49,7 +54,8 @@ class WeatherParser:
         days = []
         for i in soup:
             if len(i.text) > 5:
-                date = i.find('div', {'class' : 'day__date'}).text.lower()
+                date = i.find('div', {'class' : 'day__date'})
+                date = self.prettify_date(date)
                 temperature = i.find('div', {'class' : 'day__temperature'}).contents[0]
                 temperature = self.prettify_temperature(temperature)
                 day = DayWeather(date, temperature)
