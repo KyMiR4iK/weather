@@ -1,0 +1,2 @@
+class WeatherParserError(Exception):
+    pass
